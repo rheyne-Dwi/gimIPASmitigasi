@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMK Tangguh: Misi Mitigasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            overflow-x: hidden;
+            color: #f8fafc;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            transform: translate3d(0, 0, 0);
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+        }
+
+        .hero-img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- Musik Latar -->
+    <audio id="bg-music" loop>
+        <source src="https://github.com/rheyne-Dwi/lagugimku/raw/refs/heads/main/Clear_the_Perimeter.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="game-container" class="max-w-md w-full min-h-[680px] bg-slate-900 rounded-3xl shadow-2xl relative flex flex-col overflow-hidden border border-slate-800">
+        
+        <!-- Papan Pemuka (Dashboard) -->
+        <header id="dashboard" class="hidden p-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
+            <div class="flex flex-col">
+                <span id="display-name" class="text-xs font-bold text-blue-400 uppercase tracking-tighter truncate w-24">Pemain</span>
+                <span id="display-class" class="text-[10px] text-slate-400">Kelas</span>
+            </div>
+            <div class="flex gap-2">
+                <div id="timer-box" class="bg-slate-900 px-3 py-1 rounded-lg text-center">
+                    <p class="text-[10px] uppercase text-slate-500 font-bold">Masa</p>
+                    <p id="timer-display" class="font-mono text-yellow-400 leading-none">00:00</p>
+                </div>
+                <div id="score-box" class="bg-slate-900 px-3 py-1 rounded-lg text-center">
+                    <p class="text-[10px] uppercase text-slate-500 font-bold">Skor</p>
+                    <p id="score-display" class="font-mono text-green-400 leading-none">0</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Kawasan Kandungan Utama -->
+        <main id="main-content" class="flex-grow p-6 flex flex-col justify-center items-center text-center">
+            
+            <!-- 1. Skrin Identiti -->
+            <div id="login-screen" class="w-full space-y-6">
+                <div class="text-6xl mb-2">🛡️</div>
+                <h2 class="text-2xl font-black text-white italic uppercase tracking-tight">SMK TANGGUH</h2>
+                <p class="text-slate-400 text-sm">Masukkan identiti anda untuk memulakan misi mitigasi.</p>
+                <div class="space-y-4 text-left">
+                    <input type="text" id="input-name" placeholder="Nama Penuh" class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-blue-500 transition">
+                    <input type="text" id="input-class" placeholder="Kelas (Contoh: X TKJ 1)" class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-blue-500 transition">
+                </div>
+                <button onclick="saveIdentity()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl w-full shadow-lg transition transform active:scale-95">
+                    Masuk ke Menu
+                </button>
+            </div>
+
+            <!-- 2. Skrin Menu Utama -->
+            <div id="menu-screen" class="hidden w-full">
+                <!-- Gambar Utama Mitigasi -->
+                <img src="https://i.imgur.com/8kh4nJ6.jpeg" alt="[Imej Mitigasi Bencana]" class="hero-img shadow-lg border border-slate-700">
+                
+                <h2 class="text-xl font-bold text-white mb-6 italic">Pilih Menu Utama</h2>
+                
+                <div class="space-y-3">
+                    <div onclick="showTujuan()" class="menu-card glass p-4 rounded-2xl flex items-center gap-4 text-left">
+                        <div class="bg-blue-500/20 p-3 rounded-xl text-2xl">🎯</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Tujuan Pembelajaran</h4>
+                            <p class="text-[10px] text-slate-400 uppercase font-semibold">Sasaran kompetensi pelajar</p>
+                        </div>
+                    </div>
+
+                    <div onclick="startActivity('latihan')" class="menu-card glass p-4 rounded-2xl flex items-center gap-4 text-left">
+                        <div class="bg-green-500/20 p-3 rounded-xl text-2xl">📝</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Latihan Soal</h4>
+                            <p class="text-[10px] text-slate-400 uppercase font-semibold">Uji pemahaman teori</p>
+                        </div>
+                    </div>
+
+                    <div onclick="startActivity('gim')" class="menu-card glass p-4 rounded-2xl flex items-center gap-4 text-left">
+                        <div class="bg-purple-500/20 p-3 rounded-xl text-2xl">🎮</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Gim Seru</h4>
+                            <p class="text-[10px] text-slate-400 uppercase font-semibold">Cabaran simulasi taktik</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Skrin Tujuan Pembelajaran -->
+            <div id="tujuan-screen" class="hidden w-full space-y-4 text-left">
+                <h3 class="text-xl font-bold text-blue-400 mb-2">🎯 Tujuan Pembelajaran</h3>
+                <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700">
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex gap-2"><span>✅</span> Memahami konsep asas mitigasi bencana.</li>
+                        <li class="flex gap-2"><span>✅</span> Mengenal pasti tindakan menyelamatkan diri (Gempa, Kebakaran, Banjir).</li>
+                        <li class="flex gap-2"><span>✅</span> Menyediakan Beg Siaga Bencana (TSB).</li>
+                        <li class="flex gap-2"><span>✅</span> Membina budaya siaga di lingkungan SMK.</li>
+                    </ul>
+                </div>
+                <button onclick="backToMenu()" class="mt-6 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl w-full border border-slate-700 transition">
+                    Kembali ke Menu
+                </button>
+            </div>
+
+            <!-- 4. Skrin Aktiviti (Kuiz/Gim) -->
+            <div id="activity-screen" class="hidden w-full space-y-6">
+                <div id="scenario-icon" class="text-7xl mb-2 animate-pulse"></div>
+                <h3 id="question-text" class="text-xl font-bold text-white leading-tight"></h3>
+                <div id="options-container" class="grid grid-cols-1 gap-3 w-full"></div>
+            </div>
+
+            <!-- 5. Skrin Maklum Balas -->
+            <div id="feedback-screen" class="hidden w-full space-y-4">
+                <div id="feedback-icon" class="text-7xl"></div>
+                <h3 id="feedback-title" class="text-2xl font-bold"></h3>
+                <p id="feedback-text" class="text-slate-400 italic px-4 text-sm"></p>
+                <button onclick="handleNext()" class="bg-white text-slate-900 font-bold py-4 px-8 rounded-xl w-full hover:bg-slate-200 transition shadow-lg">
+                    Seterusnya
+                </button>
+            </div>
+
+            <!-- 6. Skrin Penamat -->
+            <div id="final-screen" class="hidden w-full space-y-6">
+                <div class="text-6xl">🏆</div>
+                <h2 class="text-2xl font-extrabold text-white">Misi Selesai</h2>
+                <div class="glass p-6 rounded-2xl">
+                    <p id="final-info" class="font-bold text-blue-400 mb-1"></p>
+                    <p id="final-score" class="text-4xl font-black text-white"></p>
+                    <p id="final-time" class="text-[10px] uppercase tracking-wider text-slate-500 mt-2 font-bold"></p>
+                </div>
+                <button onclick="backToMenu()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 px-8 rounded-xl w-full transition shadow-md">
+                    Ke Menu Utama
+                </button>
+            </div>
+
+        </main>
+
+        <!-- Kaki Laman -->
+        <footer class="p-4 bg-slate-950/50 text-center flex flex-col items-center">
+            <span class="text-[9px] text-slate-600 uppercase tracking-widest font-bold">Mitigasi Bencana SMK Kelas X</span>
+            <span class="text-[10px] text-slate-400 mt-1">@ReniDwiyanti2026</span>
+        </footer>
+    </div>
+
+    <script>
+        const content = {
+            latihan: [
+                { q: "Apakah yang dimaksudkan dengan mitigasi bencana?", icon: "📖", opt: [
+                    { t: "Aktiviti pemulihan selepas bencana", c: false, f: "Itu dipanggil rehabilitasi." },
+                    { t: "Upaya mengurangkan risiko bencana", c: true, f: "Tepat! Mitigasi adalah pencegahan/pengurangan risiko sebelum bencana berlaku." },
+                    { t: "Pemberian bantuan logistik", c: false, f: "Itu adalah sebahagian daripada bantuan kecemasan." }
+                ]},
+                { q: "Dokumen apakah yang paling krusial ada di dalam Beg Siaga Bencana?", icon: "📄", opt: [
+                    { t: "Sijil & Dokumen asal (dibalut plastik)", c: true, f: "Betul, dokumen penting harus selamat daripada air dan mudah dibawa." },
+                    { t: "Buku catatan harian", c: false, f: "Ini bukan keutamaan dalam keadaan kecemasan." },
+                    { t: "Resit perbelanjaan", c: false, f: "Tidak diperlukan untuk kelangsungan hidup." }
+                ]}
+            ],
+            gim: [
+                { q: "GEMPA! Anda sedang di makmal kimia SMK. Apakah tindakan anda?", icon: "🧪", opt: [
+                    { t: "Jauhi rak bahan kimia & berlindung", c: true, f: "Bijak! Bahan kimia cecair sangat berbahaya jika tumpah atau pecah." },
+                    { t: "Lari mengambil Alat Pemadam Api (APAR)", c: false, f: "APAR digunakan jika ada api, utamakan lindungi kepala dahulu." },
+                    { t: "Berdiri di hadapan tingkap kaca makmal", c: false, f: "Sangat berbahaya jika kaca pecah akibat getaran." }
+                ]},
+                { q: "Banjir mula setinggi buku lali di kawasan kelas. Apakah yang anda amankan?", icon: "🌊", opt: [
+                    { t: "Kasut sekolah supaya tidak basah", c: false, f: "Keselamatan nyawa dan elektrik jauh lebih penting." },
+                    { t: "Matikan semua suis elektrik pada panel", c: true, f: "Betul! Air adalah konduktor elektrik yang mematikan." },
+                    { t: "Menunggu di atas kerusi", c: false, f: "Jika air naik cepat, anda boleh terkena renjatan elektrik." }
+                ]}
+            ]
+        };
+
+        let currentMode = '';
+        let currentIdx = 0;
+        let score = 0;
+        let timer = 0;
+        let timerInterval;
+        let pName = "", pClass = "";
+
+        function hideAllScreens() {
+            const screens = ['login-screen', 'menu-screen', 'tujuan-screen', 'activity-screen', 'feedback-screen', 'final-screen'];
+            screens.forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+
+        function saveIdentity() {
+            pName = document.getElementById('input-name').value;
+            pClass = document.getElementById('input-class').value;
+            if(!pName || !pClass) return alert("Sila isi nama dan kelas terlebih dahulu!");
+            
+            hideAllScreens();
+            document.getElementById('menu-screen').classList.remove('hidden');
+            
+            const music = document.getElementById('bg-music');
+            music.volume = 0.3;
+            music.play().catch(() => {});
+        }
+
+        function showTujuan() {
+            hideAllScreens();
+            document.getElementById('tujuan-screen').classList.remove('hidden');
+        }
+
+        function backToMenu() {
+            clearInterval(timerInterval);
+            hideAllScreens();
+            document.getElementById('menu-screen').classList.remove('hidden');
+        }
+
+        function startActivity(mode) {
+            currentMode = mode;
+            currentIdx = 0;
+            score = 0;
+            timer = 0;
+            
+            hideAllScreens();
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('activity-screen').classList.remove('hidden');
+            
+            document.getElementById('display-name').innerText = pName;
+            document.getElementById('display-class').innerText = pClass;
+            document.getElementById('score-display').innerText = score;
+
+            startTimer();
+            showQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer-display').innerText = "00:00";
+            timerInterval = setInterval(() => {
+                timer++;
+                let m = Math.floor(timer/60).toString().padStart(2,'0');
+                let s = (timer%60).toString().padStart(2,'0');
+                document.getElementById('timer-display').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function showQuestion() {
+            const data = content[currentMode][currentIdx];
+            document.getElementById('scenario-icon').innerText = data.icon;
+            document.getElementById('question-text').innerText = data.q;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            data.opt.forEach(o => {
+                const b = document.createElement('button');
+                b.className = "p-4 border border-slate-700 rounded-xl text-left bg-slate-800 hover:bg-slate-700 transition text-sm font-medium hover:border-blue-500 shadow-sm";
+                b.innerText = o.t;
+                b.onclick = () => check(o);
+                container.appendChild(b);
+            });
+        }
+
+        function check(o) {
+            document.getElementById('activity-screen').classList.add('hidden');
+            document.getElementById('feedback-screen').classList.remove('hidden');
+            
+            const title = document.getElementById('feedback-title');
+            if(o.c) {
+                score += 50;
+                title.innerText = "MANTAP!";
+                title.className = "text-2xl font-black text-green-400";
+                document.getElementById('feedback-icon').innerText = "⭐";
+            } else {
+                title.innerText = "ALAMAK...";
+                title.className = "text-2xl font-black text-red-400";
+                document.getElementById('feedback-icon').innerText = "❌";
+            }
+            document.getElementById('feedback-text').innerText = o.f;
+            document.getElementById('score-display').innerText = score;
+        }
+
+        function handleNext() {
+            currentIdx++;
+            document.getElementById('feedback-screen').classList.add('hidden');
+            if(currentIdx < content[currentMode].length) {
+                document.getElementById('activity-screen').classList.remove('hidden');
+                showQuestion();
+            } else {
+                showFinal();
+            }
+        }
+
+        function showFinal() {
+            clearInterval(timerInterval);
+            hideAllScreens();
+            document.getElementById('final-screen').classList.remove('hidden');
+            
+            document.getElementById('final-info').innerText = `${pName} (${pClass})`;
+            document.getElementById('final-score').innerText = `${score} PTS`;
+            document.getElementById('final-time').innerText = `DURASI: ${document.getElementById('timer-display').innerText}`;
+        }
+    </script>
+</body>
+</html>
